@@ -2,7 +2,7 @@
 author: Patrik Cihal
 
 ![Newton's method for real numbers](screenshot_real_roots.png)
-![Newtons fractal](screenshot_newtons_fractal.png)
+![Newtons fractal](newtons_fractal.png)
 
 
 
