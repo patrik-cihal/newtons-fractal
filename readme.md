@@ -53,7 +53,10 @@ In order to draw values of function or complex numbers to screen, the program us
 **real plane:**
 
 Define value $steps_count$ as integer, which determines the smoothness of our function.
-Each step draw a line from point $f(i/stepsCount*width)$ to point $f((i+1)/stepsCount*width)$
+Each step draw a line from point 
+$f(i/stepsCount*width)$
+to point 
+$f((i+1)/stepsCount*width)$
 
 When 'space' is pressed perform next iteration by saving x-value where tangent line to our function at previous x-value crosses the x-axes.
 
