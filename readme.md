@@ -58,9 +58,9 @@ Then it calculates function coefficients from roots using permutation method.
 
 From these coefficients we can easily construct derivative of this function.
 
-$$a*x^A+b*x^B..$$
+$$ a * x ^ A + b * x ^ B ..$$
 ->
-$$a*A*x^{A-1}+b*B*x^{B-1}..$$
+$$a * A * x ^ {A - 1} + b * B * x ^ {B-1} ..$$
 
 
 ## what have we learned:
