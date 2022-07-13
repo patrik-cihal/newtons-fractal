@@ -19,13 +19,13 @@ Newton's method is used for finding roots of harder functions.
 
 Take last saved x-position (if first take random). Find the first derivative of the function at that point and turn it into linear function. 
 
-$f(x) = ax+b$
+$$f(x) = ax+b$$
 
-$a = f_0'(x_0)$
+$$a = f_0'(x_0)$$
 
-$b = f_0(x_0)-f_0'(x_0)*x_0$
+$$b = f_0(x_0)-f_0'(x_0)*x_0$$
 
-$f(x) = f_0'(x_0)*x + f_0(x_0)-f_0'(x_0)*x_0$
+$$f(x) = f_0'(x_0)*x + f_0(x_0)-f_0'(x_0)*x_0$$
 
 Find next x-position where this linear function crosses x-axis (root) and repeat iteration for this point.
 
@@ -33,7 +33,7 @@ $$f_0'(x_0)*x + f_0(x_0)-f_0'(x_0)*x_0 = 0$$
 
 $$x = (f_0'(x_0)*x_0-f_0(x_0))/f_0'(x_0)$$
 
-$$\bold{x = x_0-f_0(x_0)/f_0'(x_0)}$$
+$$x = x_0-f_0(x_0)/f_0'(x_0)$$
 
 **complex plane**:
 
@@ -50,11 +50,14 @@ The entire code is written in Rust, a compiled language which provides computati
 **complex plane:**
 In order to use complex numbers I use a library called num.
 
-User specifies the number of roots he wants and program places the roots $x_1, x_2, .., x_n$ in a cirle, resulting function becomes $(x-x_1)*(x-x_2)*(x-x_3)...*(x-x_n)$).
+User specifies the number of roots he wants and program places the roots $x_1, x_2, .., x_n$ in a cirle, resulting function becomes:
+$(x-x_1)*(x-x_2)*(x-x_3)...*(x-x_n)$.
 
-Then it calculates coefficients using permutation method.
+Then it calculates coefficients from roots using permutation method.
 
-From these coefficients we can easily construct derivative of this function. $a*x^A+b*x^B$ -> $a*A*x^{A-1}+b*B*x^{B-1}$
+From these coefficients we can easily construct derivative of this function.
+
+ $a*x^A+b*x^B ...$ -> $a*A*x^{A-1}+b*B*x^{B-1}...$
 
 
 ## what have we learned:
