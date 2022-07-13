@@ -1,10 +1,8 @@
-# Newton's fractal
-author: Patrik Cihal
+# Newton's fractal program
 
 ![Newton's method for real numbers](newtons_method.png)
 
-![Newtons fractal](newtons_fractal2.png)
-
+![Newtons fractal](screenshot_newtons_fractal.png)
 
 
 ## annotation:
@@ -48,7 +46,7 @@ Program for each pixel calculates $n$ iterations of newton's method (same equati
 
 The entire code is written in Rust, a compiled language which provides the required computational speed. 
 
-In order to draw values of function or complex numbers to screen, the program uses object camera.
+In order to display values of function or complex numbers to screen, the program uses a camera abstraction.
 
 **real plane:**
 

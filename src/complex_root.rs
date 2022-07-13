@@ -4,7 +4,7 @@ use std::prelude::*;
 use num::Complex;
 use nannou::prelude::*;
 
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use crate::{camera::GraphCamera, permutations};
 

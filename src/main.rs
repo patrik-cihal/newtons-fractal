@@ -2,9 +2,18 @@ mod camera;
 mod real_root;
 mod complex_root;
 mod sketch_complex_root;
+use std::io::stdin;
 
 fn main() {
-    complex_root::init();
+    let mut buffer = String::new();
+    stdin().read_line(&mut buffer).unwrap();
+    let buffer = buffer.trim();
+    if buffer == "complex" {
+        complex_root::init();
+    }
+    else {
+        real_root::init();
+    }
 }
 
 pub fn permutations<T: Clone>(v: &Vec<T>, length: usize) -> Vec<Vec<T>> {
