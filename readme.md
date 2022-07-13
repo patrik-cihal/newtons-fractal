@@ -2,7 +2,7 @@
 
 ![Newton's method for real numbers](newtons_method.png)
 
-![Newtons fractal](screenshot_newtons_fractal.png)
+![Newton's fractal 2](newtons_fractal3.png)
 
 
 ## annotation:
