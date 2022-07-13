@@ -54,11 +54,11 @@ User specifies the number of roots he wants and program places the roots $x_1, x
 $(x-x_1) * (x-x_2) * (x-x_3) .. * (x-x_n)$
 .
 
-Then it calculates coefficients from roots using permutation method.
+Then it calculates function coefficients from roots using permutation method.
 
 From these coefficients we can easily construct derivative of this function.
 
- $a*x^A+b*x^B ...$ -> $a*A*x^{A-1}+b*B*x^{B-1}...$
+$a*x^A+b*x^B..$ -> $a*A*x^{A-1}+b*B*x^{B-1}..$
 
 
 ## what have we learned:
