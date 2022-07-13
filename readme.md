@@ -1,16 +1,13 @@
 # Newton's fractal
 author: Patrik Cihal
 
- ![Newtons fractal](screenshot_newtons_fractal.png)
+![Newton's method for real numbers](screenshot_real_roots.png)
+![Newtons fractal](screenshot_newtons_fractal.png)
 
 
 
 ## annotation:
 Visualize how newton's method works for real numbers and it's effects when applied in complex plane by displaying colors depending on which root individual pixel (represented as number in complex plane) converges to.
-
-
-## Newton's method:
-- used for finding roots where 
 
 
 ## theoretical part:
@@ -47,26 +44,34 @@ Program for each pixel calculates $n$ iterations of newton's method (same equati
 
 
 ## practical part:
+
 The entire code is written in Rust, a compiled language which provides the required computational speed. 
+
+In order to draw values of function or complex numbers to screen, the program uses object camera.
 
 **real plane:**
 
+Define value $steps_count$ as integer, which determines the smoothness of our function.
+Each step draw a line from point $f(i/stepsCount*width)$ to point $f((i+1)/stepsCount*width)$
+
+When 'space' is pressed perform next iteration by saving x-value where tangent line to our function at previous x-value crosses the x-axes.
 
 
 **complex plane:**
+
 In order to use complex numbers I use a library called num.
 
 User specifies the number of roots he wants and program places the roots $x_1, x_2, .., x_n$ in a cirle, resulting function becomes:
-$(x-x_1) * (x-x_2) * (x-x_3) .. * (x-x_n)$
+$$(x-x_1) * (x-x_2) * (x-x_3) .. * (x-x_n)$$
 .
 
 Then it calculates function coefficients from roots using permutation method.
 
 From these coefficients we can easily construct derivative of this function.
 
-$f(x) = a * x ^ A + b * x ^ B$
+$$f(x) = a * x ^ A + b * x ^ B$$
 
-$f'(x) = a * A * x ^ {A - 1} + b * B * x ^ {B-1}$
+$$f'(x) = a * A * x ^ {A - 1} + b * B * x ^ {B-1}$$
 
 
 User can then press arrows to decrease/increase the number of iterations applied to each pixel or shift roots of the function using mouse.

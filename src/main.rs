@@ -4,7 +4,7 @@ mod complex_root;
 mod sketch_complex_root;
 
 fn main() {
-    complex_root::init();
+    real_root::init();
 }
 
 pub fn permutations<T: Clone>(v: &Vec<T>, length: usize) -> Vec<Vec<T>> {
