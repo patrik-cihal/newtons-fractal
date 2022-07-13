@@ -3,9 +3,12 @@ use std::{io};
 use num::Complex;
 use nannou::prelude::*;
 
+use std::time::{Duration, Instant};
+
 use crate::{camera::GraphCamera, permutations};
 
 const ROOT_RADIUS: f32 = 8.;
+const RENDER_STEP: u64 = 30;
 
 struct Model {
     roots: Vec<Complex<f32>>,
@@ -13,7 +16,7 @@ struct Model {
     camera: GraphCamera,
     selected_root: Option<usize>,
     data: Vec<Vec<Complex<f32>>>,
-    redraw: bool
+    iterations: usize
 }
 
 pub fn init() {
@@ -22,10 +25,18 @@ pub fn init() {
         .run();
 }
 
+fn random_color(mix: Rgb, strength: f32) -> Rgb {
+    let red = random::<f32>();
+    let green = random::<f32>();
+    let blue = random::<f32>();
+
+    Rgb::new(mix.red*strength+red*(1.-strength), mix.green*strength+green*(1.-strength), mix.blue*strength+blue*(1.-strength))
+}
+
 fn model(app: &App) -> Model {
 
     let mut buffer = String::new();
-    io::stdin().read_line(&mut buffer);
+    io::stdin().read_line(&mut buffer).expect("Couldn't read buffer.");
     let roots_count = buffer.trim().parse::<i32>().unwrap();
 
     app.new_window()
@@ -42,39 +53,33 @@ fn model(app: &App) -> Model {
     let mut roots = Vec::default();
     // push roots in circular fashion
     for x in 0..roots_count {
-        let angle = x as f32/roots_count as f32*PI+random::<f32>()-0.5;
+        let angle = x as f32/roots_count as f32*2.*PI+random::<f32>()-0.5;
         roots.push(Complex::new(angle.cos(), angle.sin()));
     }
 
+    // x^3 - 1 = 0
     // roots = vec![Complex::new(1., 0.), Complex::new(-1./2., -3f32.sqrt()/2.), Complex::new(-1./2., 3f32.sqrt()/2.)];
 
     // fill pallete
     let mut colors_pallet = vec![];
     for _ in 0..roots_count {
-        let r = random::<f32>();
-        let g = random::<f32>();
-        let b = random::<f32>();
-        colors_pallet.push(Rgb::new(r, g, b));
+        colors_pallet.push(random_color(Rgb::new(0.9, 0.9, 1.), 0.2));
     }
     
     let camera = GraphCamera { pos: Vec2::new(0., 0.), scale: Vec2::new(3., 3.) };
-    let mut data = vec![vec![Complex::default(); win.h() as usize]; win.w() as usize];
-    for x in 0..data.len() {
-        for y in 0..data[x].len() {
-            let pos = Vec2::new(x as f32, y as f32)-win.wh()/2.;
-            data[x][y] = camera.complex_vec(pos, win);
-        }
-    }
+    let data = vec![vec![Complex::default(); win.h() as usize]; win.w() as usize];
 
-
-    return Model { 
+    let mut model = Model { 
         roots,
         colors_pallet,
         camera, 
         selected_root: None, 
         data,
-        redraw: true
+        iterations: 0
     };
+
+    compute(win, &mut model);
+    return model;
 }
 
 fn mouse_pressed(app: &App, model: &mut Model, btn: MouseButton) {
@@ -96,23 +101,42 @@ fn mouse_released(app: &App, model: &mut Model, btn: MouseButton) {
         if let Some(selected_root) = model.selected_root {
             model.roots[selected_root] = model.camera.complex_vec(app.mouse.position(), win);
             model.selected_root = None;
-            for x in 0..win.w() as usize {
-                for y in 0..win.h() as usize {
-                    let pos = Vec2::new(x as f32, y as f32) - win.wh()/2.;
-                    model.data[x][y] = model.camera.complex_vec(pos, win);
-                }
-            }
+            compute(win, model);
         }
     }
 }
 
 fn key_pressed(app: &App, model: &mut Model, key: Key) {
-    if key == Key::Space {
-        compute_step(app, model);
-    }
+    let win = app.main_window().rect();
+    match key {
+        Key::Left => {
+            if model.iterations != 0 {
+                model.iterations -= 1;
+            }
+        },
+        Key::Right => {
+            model.iterations += 1;
+        },
+        Key::Z => {
+            model.camera.zoom(Vec2::new(0.3, 0.));
+        },
+        Key::X => {
+            model.camera.zoom(Vec2::new(-0.3, 0.));
+        },
+        Key::C => {
+            model.camera.zoom(Vec2::new(0., 0.3));
+        },
+        Key::V => {
+            model.camera.zoom(Vec2::new(0., -0.3));
+        },
+        _ => return
+    };
+    compute(win, model);
 }
 
-fn compute_step(_app: &App, model: &mut Model) {
+fn compute(win: Rect, model: &mut Model) {
+    let start = Instant::now();
+
     let mfunc = |x: Complex<f32>| -> Complex<f32> {
         model.roots.iter().map(|root| {
             x-root
@@ -138,12 +162,20 @@ fn compute_step(_app: &App, model: &mut Model) {
         result
     };
 
+    model.data = vec![vec![Complex::default(); win.h() as usize]; win.w() as usize];
+
     for x in 0..model.data.len() {
         for y in 0..model.data[x].len() {
-            let z = model.data[x][y];
-            model.data[x][y] = z-mfunc(z)/dmfunc(z);
+            let pos = Vec2::new(x as f32, y as f32) - win.wh()/2.;
+            model.data[x][y] = model.camera.complex_vec(pos, win);
+            for _ in 0..model.iterations {
+                let z = model.data[x][y];
+                model.data[x][y] = z-mfunc(z)/dmfunc(z);
+            }
         }
     }
+
+    println!("Computation took: {:?}.", start.elapsed());
 }   
 
 fn view(app: &App, model: &Model, frame: Frame) {
@@ -151,7 +183,10 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let win = app.main_window().rect();
 
     for x in 0..model.data.len() {
-        for y in 0..model.data[x].len() {
+        let part = (app.elapsed_frames()%RENDER_STEP) as f32/RENDER_STEP as f32;
+        let start = part*model.data[x].len() as f32;
+        let start = start as usize;
+        for y in start..start+model.data[x].len()/RENDER_STEP as usize {
             let z = model.data[x][y];
             let mut min_distance = f32::INFINITY;
             let mut i: usize = 0;
@@ -171,13 +206,21 @@ fn view(app: &App, model: &Model, frame: Frame) {
         }
     }
 
-    for root in &model.roots {
-        let mut pos = model.camera.real_vec(Vec2::new(root.re, root.im), win);
+    for (i, root) in model.roots.iter().enumerate() {
+        let pos = model.camera.real_vec(Vec2::new(root.re, root.im), win);
+
+        let color = 
+            if model.selected_root.is_some() && model.selected_root.unwrap() == i {
+                Rgb::new(0.8, 0.8, 0.8)
+            }
+            else {
+                Rgb::new(0.2, 0.2, 0.2)
+            };
 
         draw.ellipse()
             .xy(pos)
             .radius(ROOT_RADIUS)
-            .color(Rgb::new(0.2, 0.2, 0.2))
+            .color(color)
             .stroke_weight(2.)
             .stroke(WHITE);
     }

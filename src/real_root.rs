@@ -29,18 +29,18 @@ fn model(app: &App) -> Model {
 
 
     fn quadratic(x: f32) -> f32 {
-        return (x*x.sin()-5.)+x;
+        return (x-2.)*(x-0.8)*(x+0.5);
     }
 
     let camera = GraphCamera {
         pos: Vec2::new(0., 0.),
-        scale: Vec2::new(100., 100.)
+        scale: Vec2::new(5., 15.)
     };
     
     Model {
         mfunc: quadratic,
         camera,
-        tangents: vec![random::<f32>()%10.-5.],
+        tangents: vec![random::<f32>()*5.-2.5],
         last_mouse: None
     }
 }
@@ -102,25 +102,69 @@ fn tangent(mfunc: &fn(f32) -> f32, x: f32) -> (f32, f32) {
     (a, b)
 }
 
+fn order_10(a: f32) -> f32 {
+    let mut result = 32.;
+    while a < 10f32.pow(result) {
+        result -= 1.;
+    }
+    return result;
+}
+
 fn view(app: &App, model: &Model, frame: Frame) {
     let draw = app.draw();
     let win = app.main_window().rect();
 
-    draw.background().color(BLACK);
+    draw.background().color(Rgb::new(0.9, 0.9, 0.9));
 
     // x-axis
     draw.line()
         .start(Vec2::new(-win.w()/2., model.camera.real_y(0., win)))
         .end(Vec2::new(win.w()/2., model.camera.real_y(0., win)))
-        .color(BLUE)
-        .stroke_weight(2.);
+        .color(Rgb::new(0.7, 0.7, 1.))
+        .stroke_weight(5.);
 
     // y-axis
     draw.line()
         .start(Vec2::new(model.camera.real_x(0., win), -win.h()/2.))
         .end(Vec2::new(model.camera.real_x(0., win), win.h()/2.))
         .color(RED)
-        .stroke_weight(2.);
+        .stroke_weight(5.);
+
+    // grid
+    let mut x = 0.;
+    let o = order_10(model.camera.scale.x)-1.;
+    let grid_line = |start: Vec2, end: Vec2| {
+        draw.line()
+            .start(start)
+            .end(end)
+            .stroke_weight(1.)
+            .color(rgb(0.7, 0.7, 0.7));
+    };
+    while model.camera.real_x(x, win)<win.w()/2. {
+        x += 10f32.pow(o);
+        grid_line(Vec2::new(model.camera.real_x(x, win), -win.h()/2.),
+            Vec2::new(model.camera.real_x(x, win), win.h()/2.));
+    }
+    x = 0.;
+    while model.camera.real_x(x, win)>-win.w()/2. {
+        x -= 10f32.pow(o);
+        grid_line(Vec2::new(model.camera.real_x(x, win), -win.h()/2.), 
+            Vec2::new(model.camera.real_x(x, win), win.h()/2.));
+    }
+
+    let o = order_10(model.camera.scale.y)-1.;
+    let mut y = 0.;
+    while model.camera.real_y(y, win)<win.h()/2. {
+        y += 10f32.pow(o);
+        grid_line(Vec2::new(-win.w()/2., model.camera.real_y(y, win)), 
+            Vec2::new(win.w()/2., model.camera.real_y(y, win)));
+    }
+    y = 0.;
+    while model.camera.real_y(y, win)>-win.h()/2. {
+        y -= 10f32.pow(o);
+        grid_line(Vec2::new(-win.w()/2., model.camera.real_y(y, win)), 
+            Vec2::new(win.w()/2., model.camera.real_y(y, win)));
+    }
 
     // tangents
     for x in &model.tangents {
@@ -136,7 +180,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
         draw.line()
             .start(start_pos)
             .end(end_pos)
-            .color(GREEN);
+            .color(Rgb::new(0.5, 0.5, 0.5))
+            .stroke_weight(2.);
     }
 
     // draw function curve
@@ -153,18 +198,19 @@ fn view(app: &App, model: &Model, frame: Frame) {
         draw.line()
             .start(start_pos)
             .end(end_pos)
-            .color(WHITE);
+            .color(BLACK)
+            .stroke_weight(3.);
     }
 
     // draw approximated root
     let last_tangent = model.tangents.last().unwrap().clone();
     let (a, b) = tangent(&model.mfunc, last_tangent);
     let x = -b/a;
-    draw.ellipse().xy(model.camera.real_vec(Vec2::new(x, 0.), win)).radius(5.);
-
-
-    // labels
+    draw.ellipse()
+        .xy(model.camera.real_vec(Vec2::new(x, 0.), win))
+        .radius(5.)
+        .color(BLACK);
 
     // push drawing to frame
-    draw.to_frame(app, &frame);
+    draw.to_frame(app, &frame).unwrap();
 }

@@ -21,6 +21,7 @@
 - find the coefficients and derivative
 - display the fractal with shiftable roots
 - when root is clicked on, shift it with mouse
+- when arrow is clicked on increase the number of iterations for the newtons method
  
 ## model: 
 - roots: Complex[]
