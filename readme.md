@@ -51,7 +51,8 @@ The entire code is written in Rust, a compiled language which provides computati
 In order to use complex numbers I use a library called num.
 
 User specifies the number of roots he wants and program places the roots $x_1, x_2, .., x_n$ in a cirle, resulting function becomes:
-$(x-x_1)*(x-x_2)*(x-x_3)...*(x-x_n)$.
+$$(x-x_1) * (x-x_2) * (x-x_3) .. * (x-x_n)$$
+.
 
 Then it calculates coefficients from roots using permutation method.
 
