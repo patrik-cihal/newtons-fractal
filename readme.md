@@ -49,6 +49,10 @@ Program for each pixel calculates $n$ iterations of newton's method (same equati
 ## practical part:
 The entire code is written in Rust, a compiled language which provides the required computational speed. 
 
+**real plane:**
+
+
+
 **complex plane:**
 In order to use complex numbers I use a library called num.
 
