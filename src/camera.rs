@@ -20,7 +20,7 @@ impl GraphCamera {
     pub fn virt_vec(&self, pos: Vec2, win: Rect) -> Vec2 {
         pos/win.wh()*self.scale
     }
-    pub fn complex_vec(&self, pos: Vec2, win: Rect) -> Complex<f32> {
+    pub fn complex(&self, pos: Vec2, win: Rect) -> Complex<f32> {
         let vv = self.virt_vec(pos, win);
         Complex::new(vv.x, vv.y)
     }

@@ -1,4 +1,5 @@
-use std::{io};
+use std::{io, ops::Mul};
+use std::prelude::*;
 
 use num::Complex;
 use nannou::prelude::*;
@@ -66,7 +67,7 @@ fn model(app: &App) -> Model {
         colors_pallet.push(random_color(Rgb::new(0.9, 0.9, 1.), 0.2));
     }
     
-    let camera = GraphCamera { pos: Vec2::new(0., 0.), scale: Vec2::new(3., 3.) };
+    let camera = GraphCamera { pos: Vec2::new(0., 0.), scale: Vec2::new(4., 3.) };
     let data = vec![vec![Complex::default(); win.h() as usize]; win.w() as usize];
 
     let mut model = Model { 
@@ -99,7 +100,7 @@ fn mouse_released(app: &App, model: &mut Model, btn: MouseButton) {
     let win = app.main_window().rect();
     if btn == MouseButton::Left {
         if let Some(selected_root) = model.selected_root {
-            model.roots[selected_root] = model.camera.complex_vec(app.mouse.position(), win);
+            model.roots[selected_root] = model.camera.complex(app.mouse.position(), win);
             model.selected_root = None;
             compute(win, model);
         }
@@ -167,7 +168,7 @@ fn compute(win: Rect, model: &mut Model) {
     for x in 0..model.data.len() {
         for y in 0..model.data[x].len() {
             let pos = Vec2::new(x as f32, y as f32) - win.wh()/2.;
-            model.data[x][y] = model.camera.complex_vec(pos, win);
+            model.data[x][y] = model.camera.complex(pos, win);
             for _ in 0..model.iterations {
                 let z = model.data[x][y];
                 model.data[x][y] = z-mfunc(z)/dmfunc(z);
@@ -198,11 +199,20 @@ fn view(app: &App, model: &Model, frame: Frame) {
                     i = j;
                 }
             }
+            let max_offset = model.camera.complex(win.wh()/2., win); // half screen
+            let max_distance = (max_offset.re.pow(2.)+max_offset.im.pow(2.)).sqrt();
+            let min_distance = min_distance.min(max_distance);
+
+            let shade_strength = 0.4;
+            let cmp = (1.-min_distance/max_distance).pow(3.)*shade_strength+1.-shade_strength;
+
+            let color = rgb(model.colors_pallet[i].red*cmp, model.colors_pallet[i].green*cmp, model.colors_pallet[i].blue*cmp);
+
             draw.rect()
                 .xy(Vec2::new(x as f32, y as f32)-win.wh()/2.)
                 .w(1.)
                 .h(1.)
-                .color(model.colors_pallet[i]);
+                .color(color);
         }
     }
 
@@ -227,5 +237,3 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     draw.to_frame(app, &frame).unwrap();
 }
-
-

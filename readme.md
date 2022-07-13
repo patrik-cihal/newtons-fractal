@@ -1,5 +1,5 @@
 # Newton's fractal
-author: Patrik Cihal, ...
+author: Patrik Cihal
 
  ![Newtons fractal](screenshot_newtons_fractal.png)
 
@@ -63,6 +63,9 @@ From these coefficients we can easily construct derivative of this function.
 $f(x) = a * x ^ A + b * x ^ B$
 
 $f'(x) = a * A * x ^ {A - 1} + b * B * x ^ {B-1}$
+
+
+User can then press arrows to decrease/increase the number of iterations applied to each pixel or shift roots of the function using mouse.
 
 
 ## what have I learned:
