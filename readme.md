@@ -1,5 +1,5 @@
 # Newton's fractal
-authors: Patrik Cihal, ...
+author: Patrik Cihal, ...
 
  ![Newtons fractal](screenshot_newtons_fractal.png)
 
@@ -9,15 +9,15 @@ authors: Patrik Cihal, ...
 Visualize how newton's method works for real numbers and it's effects when applied in complex plane by displaying colors depending on which root individual pixel (represented as number in complex plane) converges to.
 
 
-## introduction:
-Newton's method is used for finding roots of harder functions. 
+## Newton's method:
+- used for finding roots where 
 
 
 ## theoretical part:
 
 **real plane:**
 
-Take last saved x-position (if first take random). Find the first derivative of the function at that point and turn it into linear function. 
+1. Take last saved x-position (if first take random). Find the first derivative of the function at that point and turn it into linear function. 
 
 $$f(x) = ax+b$$
 
@@ -27,7 +27,9 @@ $$b = f_0(x_0)-f_0'(x_0)*x_0$$
 
 $$f(x) = f_0'(x_0)*x + f_0(x_0)-f_0'(x_0)*x_0$$
 
-Find next x-position where this linear function crosses x-axis (root) and repeat iteration for this point.
+$$f(x) = f_0'(x_0)*(x-x_0) + f_0(x_0)$$
+
+2. Find next x-position where this linear function crosses x-axis (root) and save that point.
 
 $$f_0'(x_0)*x + f_0(x_0)-f_0'(x_0)*x_0 = 0$$
 
@@ -41,11 +43,11 @@ Each pixel depending on it's position on screen is represented as a complex numb
 
 Each complex root is represented as a point in 2d space and with random color.
 
-Program for each pixel calculates n iterations of newton's method (same equation as for real plane) and then colors it with the color of closest root to the newly calculated position.
+Program for each pixel calculates $n$ iterations of newton's method (same equation as for real plane) and then colors it with the color of closest root to the newly calculated position.
 
 
 ## practical part:
-The entire code is written in Rust, a compiled language which provides computational speed that is for our task required. 
+The entire code is written in Rust, a compiled language which provides the required computational speed. 
 
 **complex plane:**
 In order to use complex numbers I use a library called num.
@@ -63,9 +65,7 @@ $f(x) = a * x ^ A + b * x ^ B$
 $f'(x) = a * A * x ^ {A - 1} + b * B * x ^ {B-1}$
 
 
-## what have we learned:
+## what have I learned:
 1. Managing time when dealing with longer projects
 2. Complex numbers
 3. Newton's method, fractal
-
-## thanks:
