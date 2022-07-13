@@ -5,7 +5,7 @@ authors: Patrik Cihal, ...
 
 
 
-## anotation:
+## annotation:
 Visualize how newton's method works for real numbers and it's effects when applied in complex plane by displaying colors depending on which root individual pixel (represented as number in complex plane) converges to.
 
 
