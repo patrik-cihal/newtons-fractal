@@ -1,5 +1,6 @@
-use std::{io, ops::Mul};
-use std::prelude::*;
+use std::{io, thread};
+
+use rayon::prelude::*;
 
 use num::Complex;
 use nannou::prelude::*;
@@ -136,13 +137,14 @@ fn key_pressed(app: &App, model: &mut Model, key: Key) {
 }
 
 fn compute(win: Rect, model: &mut Model) {
-    let start = Instant::now();
 
     let mfunc = |x: Complex<f32>| -> Complex<f32> {
         model.roots.iter().map(|root| {
             x-root
         }).product()
     };
+
+    let start = Instant::now();
 
     // find the coefficients
     let n = model.roots.len();
@@ -154,6 +156,8 @@ fn compute(win: Rect, model: &mut Model) {
     };
     coef[n] = Complex::<f32>::new(1., 0.);
 
+    println!("Finding coefficients took: {:?}.", start.elapsed());
+
     // get the derivative
     let dmfunc = |x: Complex<f32>| -> Complex<f32> {
         let mut result = Complex::default();
@@ -163,20 +167,22 @@ fn compute(win: Rect, model: &mut Model) {
         result
     };
 
+    let start = Instant::now();
+
     model.data = vec![vec![Complex::default(); win.h() as usize]; win.w() as usize];
 
-    for x in 0..model.data.len() {
-        for y in 0..model.data[x].len() {
+    model.data.par_iter_mut().enumerate().for_each(|(x, column)| {
+        for y in 0..column.len() {
             let pos = Vec2::new(x as f32, y as f32) - win.wh()/2.;
-            model.data[x][y] = model.camera.complex(pos, win);
+            column[y] = model.camera.complex(pos, win);
             for _ in 0..model.iterations {
-                let z = model.data[x][y];
-                model.data[x][y] = z-mfunc(z)/dmfunc(z);
+                let z = column[y];
+                column[y] = z-mfunc(z)/dmfunc(z);
             }
         }
-    }
+    });
 
-    println!("Computation took: {:?}.", start.elapsed());
+    println!("Filling up data took: {:?}", start.elapsed());
 }   
 
 fn view(app: &App, model: &Model, frame: Frame) {
