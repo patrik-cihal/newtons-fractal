@@ -77,9 +77,3 @@ $$f'(x) = a * A * x ^ {A - 1} + b * B * x ^ {B-1}$$
 
 
 User can then press arrows to decrease/increase the number of iterations applied to each pixel or shift roots of the function using mouse.
-
-
-## what have I learned:
-1. Managing time when dealing with longer projects
-2. Complex numbers
-3. Newton's method, fractal
