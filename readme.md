@@ -1,8 +1,8 @@
 # Newton's fractal program
 
-![Newton's method for real numbers](newtons_method.png)
-
 ![Newton's fractal 2](newtons_fractal3.png)
+
+![Newton's method for real numbers](newtons_method.png)
 
 
 ## annotation:
